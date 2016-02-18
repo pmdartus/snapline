@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
+const gm = require('gm').subClass({imageMagick: true});
 
 /**
  * Return true if the passed entry is a screenshot
@@ -30,6 +31,28 @@ function saveSreenshotEntry(entry, filePath) {
 
       resolve(filePath);
     });
+  });
+}
+
+/**
+ * Add timestamp over a screenshot entry
+ * @param  {Object} entry
+ * @param  {String} filePath
+ * @return {Promise}
+ */
+function drawTimestamp(entry, filePath) {
+  gm(filePath).size(function(err, value) {
+    const h = value.height;
+    const w = value.width;
+
+    gm(filePath)
+      .fill('black')
+      .drawRectangle(w - 300, h - 100, w, h)
+      .fill('white')
+      .drawText(w - 290, h -10, entry.ts)
+      .write(filePath, function (err) {
+        if (!err) console.log('done');
+      });
   });
 }
 

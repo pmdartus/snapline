@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "check-dependencies": "node ./src/check-dependencies.js",
+    "verify": "npm test && npm run check-dependencies"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "gm": "^1.21.1",
     "mkdirp": "^0.5.1",
     "tap": "^5.5.0"
   }
