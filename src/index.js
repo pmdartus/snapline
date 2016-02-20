@@ -41,18 +41,27 @@ function saveSreenshotEntry (entry, filePath) {
  * @return {Promise}
  */
 function drawTimestamp (entry, filePath) {
-  gm(filePath).size(function (err, value) {
-    const h = value.height
-    const w = value.width
+  return new Promise(function (resolve, reject) {
+    gm(filePath).size(function (err, value) {
+      if (err) {
+        return reject(err)
+      }
 
-    gm(filePath)
-      .fill('black')
-      .drawRectangle(w - 300, h - 100, w, h)
-      .fill('white')
-      .drawText(w - 290, h - 10, entry.ts)
-      .write(filePath, function (err) {
-        if (!err) console.log('done')
-      })
+      const h = value.height
+      const w = value.width
+
+      gm(filePath)
+        .fill('black')
+        .drawRectangle(w - 300, h - 100, w, h)
+        .fill('white')
+        .drawText(w - 290, h - 10, entry.relTs)
+        .write(filePath, function (err) {
+          if (err) {
+            return reject(err)
+          }
+          resolve()
+        })
+    })
   })
 }
 
@@ -141,10 +150,25 @@ module.exports = function (params) {
           const fileName = `${imageNamePrefix}${index}.png`
           const filePath = path.resolve(folderPath, fileName)
           return saveSreenshotEntry(entry, filePath)
+            // .then(() => drawTimestamp(entry, filePath))
         })
 
       return createFolder(folderPath)
         .then(() => Promise.all(sreenshots))
+    },
+
+    saveGif: function (opts) {
+      const screenshotOpts = Object.assign({
+        folder: '_tmp'
+      })
+
+      return this.saveScreenshots(screenshotOpts)
+        .then(res => {
+          gm('_tmp/*.png')
+            .delay(100)
+            .loop(1)
+            .write('test.gif', (err) => console.log(err))
+        })
     }
   }
 }

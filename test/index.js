@@ -29,4 +29,5 @@ tap.test('factory', t => {
 
 timelineScreenshot({
   entries: exampleTimeline
-}).saveScreenshots()
+}).saveGif()
+  .catch(err => console.log(err))
