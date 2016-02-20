@@ -1,17 +1,17 @@
-'use strict';
+'use strict'
 
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const gm = require('gm').subClass({imageMagick: true});
+const fs = require('fs')
+const path = require('path')
+const mkdirp = require('mkdirp')
+const gm = require('gm').subClass({imageMagick: true})
 
 /**
  * Return true if the passed entry is a screenshot
  * @param  {Object}  entry
  * @return {Boolean}
  */
-function isScreenshotEntry(entry) {
-  return entry.name === 'Screenshot';
+function isScreenshotEntry (entry) {
+  return entry.name === 'Screenshot'
 }
 
 /**
@@ -20,18 +20,18 @@ function isScreenshotEntry(entry) {
  * @param  {String} filePath
  * @return {Promise} resolving the file image path
  */
-function saveSreenshotEntry(entry, filePath) {
-  const fileContent = entry.args.snapshot;
+function saveSreenshotEntry (entry, filePath) {
+  const fileContent = entry.args.snapshot
 
   return new Promise(function (resolve, reject) {
-    fs.writeFile(filePath, fileContent, 'base64', function(err) {
+    fs.writeFile(filePath, fileContent, 'base64', function (err) {
       if (err) {
-        return reject(err);
+        return reject(err)
       }
 
-      resolve(filePath);
-    });
-  });
+      resolve(filePath)
+    })
+  })
 }
 
 /**
@@ -40,20 +40,51 @@ function saveSreenshotEntry(entry, filePath) {
  * @param  {String} filePath
  * @return {Promise}
  */
-function drawTimestamp(entry, filePath) {
-  gm(filePath).size(function(err, value) {
-    const h = value.height;
-    const w = value.width;
+function drawTimestamp (entry, filePath) {
+  gm(filePath).size(function (err, value) {
+    const h = value.height
+    const w = value.width
 
     gm(filePath)
       .fill('black')
       .drawRectangle(w - 300, h - 100, w, h)
       .fill('white')
-      .drawText(w - 290, h -10, entry.ts)
+      .drawText(w - 290, h - 10, entry.ts)
       .write(filePath, function (err) {
-        if (!err) console.log('done');
-      });
-  });
+        if (!err) console.log('done')
+      })
+  })
+}
+
+/**
+ * Takes a list of screenshots and generate missing entries
+ * @param  {[type]} entries [description]
+ * @return {[type]}         [description]
+ */
+function generateMissingEntries (entries, framesPerSec) {
+  const framesPerMs = (framesPerSec || 10) / 1000
+  const startTime = entries[0].ts
+
+  return entries
+    .map(function (entry) {
+      return Object.assign({
+        relTs: (entry.ts - startTime) / 1000
+      }, entry)
+    })
+    .reduce(function (list, entry, index, array) {
+      list.push(entry)
+
+      const diffWithNext = index < array.length - 1 ? array[index + 1].relTs - array[index].relTs : 0
+      const duplateFrameNb = Math.floor(diffWithNext * framesPerMs)
+
+      for (let i = 0; i < duplateFrameNb; i++) {
+        list.push(Object.assign({
+          relTs: entry.relTs + i * (1 / framesPerMs)
+        }, entry))
+      }
+
+      return list
+    }, [])
 }
 
 /**
@@ -61,26 +92,26 @@ function drawTimestamp(entry, filePath) {
  * @param  {String} folderPath
  * @return {Promise} resolving the first created directory
  */
-function createFolder(folderPath) {
+function createFolder (folderPath) {
   return new Promise(function (resolve, reject) {
-    mkdirp(folderPath, {}, function(err, res) {
+    mkdirp(folderPath, {}, function (err, res) {
       if (err) {
-        return reject(err);
+        return reject(err)
       }
 
-      resolve(res);
-    });
-  });
+      resolve(res)
+    })
+  })
 }
 
-module.exports = function(params) {
+module.exports = function (params) {
   if (!params || !params.entries) {
-    throw new Error('entries parameter should be present');
+    throw new Error('entries parameter should be present')
   } else if (!Array.isArray(params.entries)) {
-    throw new Error('It doesn\'t seams that the entries params is an array');
+    throw new Error('It doesn\'t seams that the entries params is an array')
   }
 
-  const timeline = params.entries;
+  const timeline = params.entries
 
   return {
     /**
@@ -88,7 +119,7 @@ module.exports = function(params) {
      * @return {Object[]}
      */
     getScreenshotEntries: function () {
-      return timeline.filter(isScreenshotEntry);
+      return timeline.filter(isScreenshotEntry)
     },
 
     /**
@@ -96,25 +127,24 @@ module.exports = function(params) {
      * @param  {Object} opts
      * @return {String[]} the list of image names
      */
-    saveScreenshots: function(opts) {
-      opts = opts || {};
-      const imageNamePrefix = opts.prefix ? opts.prefix  + '-' : '';
+    saveScreenshots: function (opts) {
+      opts = opts || {}
+      const imageNamePrefix = opts.prefix ? opts.prefix + '-' : ''
 
-      let folderPath = opts.folder || './screenshots';
+      let folderPath = opts.folder || './screenshots'
       if (!path.isAbsolute(folderPath)) {
-        folderPath = path.resolve(process.cwd(), folderPath);
+        folderPath = path.resolve(process.cwd(), folderPath)
       }
 
-      const saveScreenshots = this.getScreenshotEntries()
-        .sort((a, b) => a.ts < b.ts)
+      const sreenshots = generateMissingEntries(this.getScreenshotEntries())
         .map((entry, index) => {
-          const fileName = `${imageNamePrefix}${index}.png`;
-          const filePath = path.resolve(folderPath, fileName);
-          return saveSreenshotEntry(entry, filePath);
-        });
+          const fileName = `${imageNamePrefix}${index}.png`
+          const filePath = path.resolve(folderPath, fileName)
+          return saveSreenshotEntry(entry, filePath)
+        })
 
       return createFolder(folderPath)
-        .then(() => Promise.all(saveScreenshots));
+        .then(() => Promise.all(sreenshots))
     }
-  };
+  }
 }

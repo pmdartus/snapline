@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js",
-    "check-dependencies": "node ./src/check-dependencies.js",
-    "verify": "npm test && npm run check-dependencies"
+    "lint": "./node_modules/.bin/standard",
+    "verify": "npm test"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +14,12 @@
     "gm": "^1.21.1",
     "mkdirp": "^0.5.1",
     "tap": "^5.5.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^5.0.0",
+    "standard": "^6.0.7"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }
