@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const mkdirp = require('mkdirp')
+const utils = require('./utils')
 const gm = require('gm').subClass({imageMagick: true})
 
 /**
@@ -12,20 +12,6 @@ const gm = require('gm').subClass({imageMagick: true})
  */
 function isScreenshotEntry (entry) {
   return entry.name === 'Screenshot'
-}
-
-/**
- * Add a padding in front of a number
- * @param  {Number} number to convert
- * @param  {Number} length expected string length
- * @return {String}
- */
-function padLeft (number, length) {
-  let ret = number + ''
-  while (ret.length < length) {
-    ret = '0' + ret
-  }
-  return ret
 }
 
 /**
@@ -110,31 +96,14 @@ function generateMissingEntries (entries, framesPerSec) {
     }, [])
 }
 
-/**
- * Create a folder if not aldready existing
- * @param  {String} folderPath
- * @return {Promise} resolving the first created directory
- */
-function createFolder (folderPath) {
-  return new Promise(function (resolve, reject) {
-    mkdirp(folderPath, {}, function (err, res) {
-      if (err) {
-        return reject(err)
-      }
-
-      resolve(res)
-    })
-  })
-}
-
-module.exports = function (params) {
-  if (!params || !params.entries) {
-    throw new Error('entries parameter should be present')
-  } else if (!Array.isArray(params.entries)) {
+module.exports = function (entries) {
+  if (!entries) {
+    throw new Error('You must specify the entry')
+  } else if (!Array.isArray(entries)) {
     throw new Error('It doesn\'t seams that the entries params is an array')
   }
 
-  const timeline = params.entries
+  const timeline = entries
 
   return {
     /**
@@ -159,16 +128,18 @@ module.exports = function (params) {
         folderPath = path.resolve(process.cwd(), folderPath)
       }
 
-      const sreenshots = generateMissingEntries(this.getScreenshotEntries())
-        .map((entry, index) => {
-          const fileName = `${imageNamePrefix}${padLeft(index, 4)}.png`
-          const filePath = path.resolve(folderPath, fileName)
-          return saveSreenshotEntry(entry, filePath)
-            // .then(() => drawTimestamp(entry, filePath))
-        })
+      const screenshotsEntries = generateMissingEntries(this.getScreenshotEntries())
 
-      return createFolder(folderPath)
-        .then(() => Promise.all(sreenshots))
+      return utils.createFolder(folderPath)
+        .then(function () {
+          const saveAll = screenshotsEntries
+            .map((entry, index) => {
+              const fileName = `${imageNamePrefix}${utils.padLeft(index, 4)}.png`
+              const filePath = path.resolve(folderPath, fileName)
+              return saveSreenshotEntry(entry, filePath)
+            })
+          return Promise.all(saveAll)
+        })
     },
 
     saveGif: function (opts) {
@@ -177,11 +148,18 @@ module.exports = function (params) {
       }, opts)
 
       return this.saveScreenshots(screenshotOpts)
-        .then(res => {
-          gm('_tmp/*.png')
-            .delay(100)
-            .loop(1)
-            .write('test.gif', (err) => console.log(err))
+        .then(function () {
+          return new Promise(function (resolve, reject) {
+            gm('_tmp/*.png')
+              .delay(100)
+              .loop(1)
+              .write('test.gif', function (err) {
+                if (err) {
+                  return reject(err)
+                }
+                resolve()
+              })
+          })
         })
     }
   }
