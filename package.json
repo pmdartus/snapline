@@ -13,7 +13,8 @@
   "dependencies": {
     "gm": "^1.21.1",
     "mkdirp": "^0.5.1",
-    "tap": "^5.5.0"
+    "tap": "^5.5.0",
+    "yargs": "^4.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^5.0.0",

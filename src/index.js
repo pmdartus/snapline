@@ -15,6 +15,20 @@ function isScreenshotEntry (entry) {
 }
 
 /**
+ * Add a padding in front of a number
+ * @param  {Number} number to convert
+ * @param  {Number} length expected string length
+ * @return {String}
+ */
+function padLeft (number, length) {
+  let ret = number + ''
+  while (ret.length < length) {
+    ret = '0' + ret
+  }
+  return ret
+}
+
+/**
  * Saves a screenshot entry on the disk
  * @param  {Object} entry
  * @param  {String} filePath
@@ -147,7 +161,7 @@ module.exports = function (params) {
 
       const sreenshots = generateMissingEntries(this.getScreenshotEntries())
         .map((entry, index) => {
-          const fileName = `${imageNamePrefix}${index}.png`
+          const fileName = `${imageNamePrefix}${padLeft(index, 4)}.png`
           const filePath = path.resolve(folderPath, fileName)
           return saveSreenshotEntry(entry, filePath)
             // .then(() => drawTimestamp(entry, filePath))
@@ -160,7 +174,7 @@ module.exports = function (params) {
     saveGif: function (opts) {
       const screenshotOpts = Object.assign({
         folder: '_tmp'
-      })
+      }, opts)
 
       return this.saveScreenshots(screenshotOpts)
         .then(res => {
