@@ -144,7 +144,8 @@ module.exports = function (entries) {
 
     saveGif: function (opts) {
       const screenshotOpts = Object.assign({
-        folder: '_tmp'
+        folder: '_tmp',
+        filePath: 'timeline.gif'
       }, opts)
 
       return this.saveScreenshots(screenshotOpts)
@@ -153,7 +154,7 @@ module.exports = function (entries) {
             gm('_tmp/*.png')
               .delay(100)
               .loop(1)
-              .write('test.gif', function (err) {
+              .write(screenshotOpts.filePath, function (err) {
                 if (err) {
                   return reject(err)
                 }

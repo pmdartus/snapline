@@ -1,0 +1,41 @@
+#! /usr/bin/env node
+'use strict'
+
+const fs = require('fs')
+const yargs = require('yargs')
+const timelineConvert = require('../src')
+
+function exitOnError (message) {
+  console.error(message)
+  process.exit(1)
+}
+
+const argv = yargs
+  .usage('Usage: $0 <timeline> [options]')
+  .help()
+  .demand(1)
+  .option('o', {
+    alias: 'output',
+    default: 'timeline.gif',
+    describe: 'Output file name',
+    type: 'string'
+  })
+  .argv
+
+const timelinePath = argv._[0]
+const timelineFile = fs.readFileSync(argv._[0])
+
+let timelineEntries
+try {
+  timelineEntries = JSON.parse(timelineFile)
+} catch (e) {
+  exitOnError(`Impossible to parse: ${timelinePath}`)
+}
+
+const convertOptions = {
+  filePath: argv.output
+}
+
+timelineConvert(timelineEntries)
+  .saveGif(convertOptions)
+  .catch(err => exitOnError(err.message))
