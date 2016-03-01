@@ -1,6 +1,6 @@
-# Timeline Screenshot
+# snapline
 
-Lightweight library to manipulate and export Screenshot from Chrome Devtool Timeline
+Unleash your screenshots stored in Chrome Devtool timeline files
 
 ## License
 

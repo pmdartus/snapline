@@ -1,15 +1,23 @@
 {
-  "name": "timeline-screenshot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "snapline",
+  "version": "0.0.1",
+  "description": "Unleash your screenshots stored in Chrome Devtool timeline files",
+  "author": "Pierre-Marie Dartus <dartus.pierremarie@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "chrome",
+    "devtool",
+    "timeline",
+    "screenshot",
+    "gif"
+  ],
+
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js",
-    "lint": "./node_modules/.bin/standard",
-    "verify": "npm test"
+    "lint": "./node_modules/.bin/standard"
   },
-  "author": "",
-  "license": "ISC",
+
   "dependencies": {
     "gm": "^1.21.1",
     "mkdirp": "^0.5.1",
@@ -20,6 +28,10 @@
     "babel-eslint": "^5.0.0",
     "standard": "^6.0.7"
   },
+  "engines": {
+    "node": ">=4.0"
+  },
+
   "standard": {
     "parser": "babel-eslint"
   }

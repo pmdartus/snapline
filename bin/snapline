@@ -3,7 +3,7 @@
 
 const fs = require('fs')
 const yargs = require('yargs')
-const timelineConvert = require('../src')
+const snapline = require('../src')
 
 function exitOnError (message) {
   console.error(message)
@@ -36,6 +36,6 @@ const convertOptions = {
   filePath: argv.output
 }
 
-timelineConvert(timelineEntries)
+snapline(timelineEntries)
   .saveGif(convertOptions)
   .catch(err => exitOnError(err.message))
