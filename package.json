@@ -11,6 +11,10 @@
     "screenshot",
     "gif"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pmdartus/snapline/"
+  },
 
   "main": "index.js",
   "scripts": {
