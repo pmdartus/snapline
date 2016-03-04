@@ -27,12 +27,12 @@ npm install -g snapline
 ## Node usage
 
 ```js
-const fs = require('fs')
-const snapline = require('snapline')
+const snapline = require('../src')
+const timeline = require('./my-awesome-timeline.json')
 
-const timeline = JSON.parse(fs.readFileSync('my-timeline.json'))
-snapline(timeline).saveGif()
-  .then(filePath => console.log(`The gif(t) is ready: ${path}!`))
+snapline(timeline)
+  .saveGif()
+  .then(gifPath => console.log(`The gif(t) is ready: ${gifPath}!`))
 ```
 
 ## API
