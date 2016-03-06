@@ -4,6 +4,8 @@
 
 > Unleash your screenshots stored in Chrome Devtool timeline files
 
+## [DEMO](https://youtu.be/t2YhR8lOY4Y)
+
 ## Features
 
 * Convert timeline to gif
@@ -49,6 +51,7 @@ snapline.toGif(timeline)
   * `output` <String> - path of the gif. default: `./timeline.gif`
   * `fps` <Number> - Number of frames per seconds. default: `10`
 
+
 Returns a `Promise` that resolves with the path of the created gif
 
 ### `snaplie.toImages(timeline[, options])`
@@ -57,6 +60,7 @@ Returns a `Promise` that resolves with the path of the created gif
 * `options` <Object>
   * `output` <String> - folder path that will contains the screenshots. default: `./screenshots`
   * `fps` <Number> - Number of frames per seconds. default: `10`
+
 
 Returns a `Promise` that resolves with the path of the path of the created directory
 
