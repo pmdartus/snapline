@@ -1,6 +1,6 @@
 {
   "name": "snapline",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Unleash your screenshots stored in Chrome Devtool timeline files",
   "author": "Pierre-Marie Dartus <dartus.pierremarie@gmail.com>",
   "license": "MIT",
