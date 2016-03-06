@@ -3,7 +3,7 @@
 
 const fs = require('fs')
 const yargs = require('yargs')
-const snapline = require('../src')
+const snapline = require('..')
 
 function exitOnError (message) {
   console.error(message)
@@ -20,6 +20,12 @@ const argv = yargs
     describe: 'Output file name',
     type: 'string'
   })
+  .option('f', {
+    alias: 'fps',
+    default: '10',
+    describe: 'Number of frames per seconds',
+    type: 'number'
+  })
   .argv
 
 const timelinePath = argv._[0]
@@ -32,10 +38,5 @@ try {
   exitOnError(`Impossible to parse: ${timelinePath}`)
 }
 
-const convertOptions = {
-  filePath: argv.output
-}
-
-snapline(timelineEntries)
-  .saveGif(convertOptions)
+snapline.toGif(timelineEntries, argv)
   .catch(err => exitOnError(err.message))
