@@ -20,7 +20,7 @@
     "snapline": "bin/snapline"
   },
   "scripts": {
-    "test": "tap test/*.js",
+    "test": "node example/convert-to-gif.js && npm link && snapline example/loading.json",
     "lint": "./node_modules/.bin/standard"
   },
   "dependencies": {
@@ -28,7 +28,6 @@
     "yargs": "^4.1.0"
   },
   "devDependencies": {
-    "tap": "^5.5.0",
     "babel-eslint": "^5.0.0",
     "standard": "^6.0.7"
   },
