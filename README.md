@@ -52,7 +52,7 @@ snapline.toGif(timeline)
 
 Returns a `Promise` that resolves with the path of the created gif
 
-### `snaplie.toImages(timeline[, options])`
+### `snapline.toImages(timeline[, options])`
 
 * `timeline` <timelineEntry[]> - The parsed JSON content of the timeline file
 * `options.output` <String> - folder path that will contains the screenshots. default: `./screenshots`
